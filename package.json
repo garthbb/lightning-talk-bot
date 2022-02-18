@@ -3,8 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
-    "@notionhq/client": "^0.1.9"
+    "@notionhq/client": "^0.1.9",
+    "@slack/bolt": "^3.9.0",
+    "dotenv": "^16.0.0"
   }
 }

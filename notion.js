@@ -1,10 +1,10 @@
 import { Client } from "@notionhq/client";
+import "dotenv/config";
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
-
 const databaseId = process.env.NOTION_DATABASE_ID;
 
-async function getTopThreeTopics() {
+export async function getTopThreeTopics() {
   try {
     const response = await notion.databases.query({
       database_id: databaseId,
@@ -32,7 +32,7 @@ async function getTopThreeTopics() {
       ],
     });
     const { results } = response;
-    let slackMessage = "";
+    let slackMessage = "This week's chosen lightning talk topics are:\n";
     let validChats = 0;
 
     for (const topic of results) {
@@ -46,7 +46,7 @@ async function getTopThreeTopics() {
         break;
       }
     }
-    console.log(slackMessage);
+    return slackMessage;
   } catch (error) {
     console.error(error);
   }
@@ -63,5 +63,3 @@ const processTopicObject = (rawTopic) => {
     isValid: processedTopic.speaker && processedTopic.title,
   };
 };
-
-getTopThreeTopics();
