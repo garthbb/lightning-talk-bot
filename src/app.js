@@ -42,9 +42,10 @@ function createSlackMessage(topics) {
   let slackMessage = "This week's chosen lightning talk topics are:\n";
   for (const [i, topic] of topics.entries()) {
     const { title, speaker, slackName, upvoteCount } = topic;
+    const upvoteLabel = upvoteCount > 1 ? 'upvotes' : 'upvote';
     slackMessage += `${i + 1}. ${title} by ${
       slackName || speaker
-    } at ${upvoteCount} upvote(s)\n`;
+    } at ${upvoteCount} ${upvoteLabel}\n`;
   }
   return slackMessage;
 }
