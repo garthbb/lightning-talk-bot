@@ -57,6 +57,7 @@ const processTopicObject = (rawTopic) => {
     title: rawTopic.properties.Topic?.title?.[0]?.text?.content,
     upvoteCount: rawTopic.properties.Upvotes?.formula?.number,
     speaker: rawTopic.properties.Speakers?.people?.[0]?.name,
+    speakerEmail: rawTopic.properties.Speakers?.people?.[0]?.person?.email,
   };
   return {
     ...processedTopic,

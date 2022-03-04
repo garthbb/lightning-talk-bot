@@ -1,0 +1,6 @@
+.next
+**/*.d.ts
+node_modules
+public
+tsconfig.json
+studio/dist/**
