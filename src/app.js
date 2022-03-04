@@ -17,9 +17,34 @@ const app = new App({
   console.log('⚡️ Bolt app is running!');
   const channelID = await findChannelID(app, 'lightning-talk-bot');
   if (channelID) {
-    const messageBody = await getTopThreeTopics();
-    getUserByEmail(app, 'garth@bakkenbaeck.no');
-    // publishMessage(app, channelID, messageBody);
+    const topics = await getTopThreeTopics();
+    const topicsWithSlackNames = await Promise.all(
+      topics.map(async topic => ({
+        ...topic,
+        slackName: await getSlackName(app, topic.speakerEmail)
+      }))
+    );
+
+    const slackMessage = createSlackMessage(topicsWithSlackNames);
+    publishMessage(app, channelID, slackMessage);
   }
   await app.stop();
 })();
+
+async function getSlackName(app, speakerEmail) {
+  const matchingSlackUser = await getUserByEmail(app, speakerEmail);
+  return matchingSlackUser
+    ? `<@${matchingSlackUser.profile.display_name}>`
+    : '';
+}
+
+function createSlackMessage(topics) {
+  let slackMessage = "This week's chosen lightning talk topics are:\n";
+  for (const [i, topic] of topics.entries()) {
+    const { title, speaker, slackName, upvoteCount } = topic;
+    slackMessage += `${i + 1}. ${title} by ${
+      slackName || speaker
+    } at ${upvoteCount} upvote(s)\n`;
+  }
+  return slackMessage;
+}

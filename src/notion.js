@@ -1,5 +1,5 @@
-import { Client } from "@notionhq/client";
-import "dotenv/config";
+import { Client } from '@notionhq/client';
+import 'dotenv/config';
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 const databaseId = process.env.NOTION_DATABASE_ID;
@@ -11,56 +11,54 @@ export async function getTopThreeTopics() {
       filter: {
         or: [
           {
-            property: "Status",
+            property: 'Status',
             select: {
-              equals: "Accepted",
-            },
+              equals: 'Accepted'
+            }
           },
           {
-            property: "Status",
+            property: 'Status',
             select: {
-              is_empty: true,
-            },
-          },
-        ],
+              is_empty: true
+            }
+          }
+        ]
       },
       sorts: [
         {
-          property: "Upvotes",
-          direction: "descending",
-        },
-      ],
+          property: 'Upvotes',
+          direction: 'descending'
+        }
+      ]
     });
     const { results } = response;
-    let slackMessage = "This week's chosen lightning talk topics are:\n";
-    let validChats = 0;
+
+    let validTopics = [];
 
     for (const topic of results) {
-      const { title, speaker, upvoteCount, isValid } =
-        processTopicObject(topic);
-      if (isValid) {
-        validChats += 1;
-        slackMessage += `${validChats}. ${title} by ${speaker} at ${upvoteCount} upvote(s)\n`;
+      const processedTopic = processTopicObject(topic);
+      if (processedTopic.isValid) {
+        validTopics.push(processedTopic);
       }
-      if (validChats === 3) {
+      if (validTopics.length === 3) {
         break;
       }
     }
-    return slackMessage;
+    return validTopics;
   } catch (error) {
     console.error(error);
   }
 }
 
-const processTopicObject = (rawTopic) => {
+const processTopicObject = rawTopic => {
   const processedTopic = {
     title: rawTopic.properties.Topic?.title?.[0]?.text?.content,
     upvoteCount: rawTopic.properties.Upvotes?.formula?.number,
     speaker: rawTopic.properties.Speakers?.people?.[0]?.name,
-    speakerEmail: rawTopic.properties.Speakers?.people?.[0]?.person?.email,
+    speakerEmail: rawTopic.properties.Speakers?.people?.[0]?.person?.email
   };
   return {
     ...processedTopic,
-    isValid: processedTopic.speaker && processedTopic.title,
+    isValid: processedTopic.speaker && processedTopic.title
   };
 };

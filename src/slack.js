@@ -44,23 +44,26 @@ export async function publishMessage(app, id, text) {
 }
 
 export async function getUserByEmail(app, email) {
-  let matchedUser = '';
   let hasNextCursor = true;
   let cursor;
+  let matchedUser;
 
   while (hasNextCursor && !matchedUser) {
-    const result = await app.client.users.list({
-      token: process.env.SLACK_AUTH_TOKEN,
-      limit: 200,
-      cursor
-    });
-
-    cursor = result.response_metadata?.next_cursor;
-    hasNextCursor = !!cursor;
-    console.log(email);
-    console.log(result.members[0].profile.email);
-    matchedUser = result.members[0].name;
+    try {
+      const result = await app.client.users.list({
+        token: process.env.SLACK_AUTH_TOKEN,
+        limit: 200,
+        cursor
+      });
+      cursor = result.response_metadata?.next_cursor;
+      hasNextCursor = !!cursor;
+      matchedUser = result.members.find(
+        member => member.profile?.email === email
+      );
+    } catch (err) {
+      console.log(err);
+      return;
+    }
   }
-
   return matchedUser;
 }
