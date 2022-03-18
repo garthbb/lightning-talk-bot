@@ -17,4 +17,4 @@ source bbdeployor.conf
 # sed -i "s/DOCKERHOST/$DOCKERHOST/g" /etc/nginx/sites-enabled/$HOSTNAME
 # bbdeployor service-restart nginx || true
 
-bbdeployor service-install /var/www/$SHORTNAME/start-marketing-website.sh pio-marketing-website
+bbdeployor service-install /var/www/$SHORTNAME/start-lightning-talk-bot.sh lightning-talk-bot
