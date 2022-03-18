@@ -16,7 +16,8 @@ const app = new App({
   await app.start(process.env.PORT || 8000);
 
   console.log('⚡️ Bolt app is running!');
-  schedule.scheduleJob('* * * * *', function () {
+  // Weekdays at 12
+  schedule.scheduleJob('0 12 * * 1-5', function () {
     runTheJob(app);
   });
   // await app.stop();
