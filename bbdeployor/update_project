@@ -1,0 +1,18 @@
+#!/bin/bash
+# https://github.com/bakkenbaeck/tech-wiki/wiki/bbdeployor
+
+set -o nounset
+set -o errexit
+set +o histexpand
+
+echo "git reset/pull..."
+git reset --hard HEAD
+GIT_BRANCH=$(git symbolic-ref --short -q HEAD)
+timeout 120s git fetch --all
+git reset --hard "origin/$GIT_BRANCH"
+echo "Branch $GIT_BRANCH"
+timeout 60s git submodule foreach --recursive git pull origin "$GIT_BRANCH"
+
+bbdeployor/make_project
+bbdeployor/install_project
+bbdeployor service-restart start-lightning-talk-bot || true

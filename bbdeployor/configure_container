@@ -1,0 +1,19 @@
+#!/bin/bash
+# https://github.com/bakkenbaeck/tech-wiki/wiki/bbdeployor
+
+# Do NOT touch anything in the project directory (/var/www/...) here.
+
+set -o nounset
+set -o errexit
+set +o histexpand
+
+# See https://github.com/nodesource/distributions/blob/master/README.md
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+
+# If you want to run apt-get install, do an apt-get update before:
+# Package lists in the base image might be outdated, causing
+# downloads to fail
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+
+export NODE_ENV="production"

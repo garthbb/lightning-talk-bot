@@ -1,0 +1,12 @@
+#!/bin/bash
+# https://github.com/bakkenbaeck/tech-wiki/wiki/bbdeployor
+
+# ONLY write to the project directory (/var/www/...) here.
+# Make sure all your project (persistent) data is in the project dir.
+# Do NOT start any background services here.
+
+set -o nounset
+set -o errexit
+set +o histexpand
+
+npm install

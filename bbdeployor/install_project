@@ -1,0 +1,20 @@
+#!/bin/bash
+# https://github.com/bakkenbaeck/tech-wiki/wiki/bbdeployor
+
+# Do NOT touch anything in the project directory (/var/www/...) here.
+
+set -o nounset
+set -o errexit
+set +o histexpand
+
+# retrieve HOSTNAME and SHORTNAME
+source bbdeployor.conf
+
+# fix hostnames and IPs in nginx.conf
+# DOCKERHOST=$(ip route|awk '/default/ { print $3 }')
+# sed "s/HOSTNAME/$HOSTNAME/g" bbdeployor/nginx.conf > /etc/nginx/sites-enabled/$HOSTNAME
+# sed -i "s/SHORTNAME/$SHORTNAME/g" /etc/nginx/sites-enabled/$HOSTNAME
+# sed -i "s/DOCKERHOST/$DOCKERHOST/g" /etc/nginx/sites-enabled/$HOSTNAME
+# bbdeployor service-restart nginx || true
+
+bbdeployor service-install /var/www/$SHORTNAME/start-marketing-website.sh pio-marketing-website

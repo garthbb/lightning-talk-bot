@@ -3,6 +3,7 @@ const { App } = pkg;
 import 'dotenv/config';
 import { getTopThreeTopics } from './notion.js';
 import { findChannelID, getUserByEmail, publishMessage } from './slack.js';
+import schedule from 'node-schedule';
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -12,9 +13,16 @@ const app = new App({
 
 (async () => {
   // Start your app
-  await app.start(process.env.PORT || 3000);
+  await app.start(process.env.PORT || 8000);
 
   console.log('⚡️ Bolt app is running!');
+  schedule.scheduleJob('* * * * *', function () {
+    runTheJob(app);
+  });
+  // await app.stop();
+})();
+
+async function runTheJob(app) {
   const channelID = await findChannelID(app, 'lightning-talk-bot');
   if (channelID) {
     const topics = await getTopThreeTopics();
@@ -28,9 +36,7 @@ const app = new App({
     const slackMessage = createSlackMessage(topicsWithSlackNames);
     publishMessage(app, channelID, slackMessage);
   }
-  await app.stop();
-})();
-
+}
 async function getSlackName(app, speakerEmail) {
   const matchingSlackUser = await getUserByEmail(app, speakerEmail);
   return matchingSlackUser
